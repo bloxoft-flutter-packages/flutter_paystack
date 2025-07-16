@@ -1,19 +1,20 @@
 import 'package:flutter/material.dart' hide ErrorWidget;
-import 'package:flutter_paystack/src/api/service/contracts/banks_service_contract.dart';
-import 'package:flutter_paystack/src/api/service/contracts/cards_service_contract.dart';
-import 'package:flutter_paystack/src/common/paystack.dart';
-import 'package:flutter_paystack/src/common/utils.dart';
-import 'package:flutter_paystack/src/models/card.dart';
-import 'package:flutter_paystack/src/models/charge.dart';
-import 'package:flutter_paystack/src/models/checkout_response.dart';
-import 'package:flutter_paystack/src/widgets/base_widget.dart';
-import 'package:flutter_paystack/src/widgets/checkout/bank_checkout.dart';
-import 'package:flutter_paystack/src/widgets/checkout/card_checkout.dart';
-import 'package:flutter_paystack/src/widgets/checkout/checkout_method.dart';
-import 'package:flutter_paystack/src/widgets/common/extensions.dart';
-import 'package:flutter_paystack/src/widgets/custom_dialog.dart';
-import 'package:flutter_paystack/src/widgets/error_widget.dart';
-import 'package:flutter_paystack/src/widgets/sucessful_widget.dart';
+
+import '../../api/service/contracts/banks_service_contract.dart';
+import '../../api/service/contracts/cards_service_contract.dart';
+import '../../common/paystack.dart';
+import '../../common/utils.dart';
+import '../../models/card.dart';
+import '../../models/charge.dart';
+import '../../models/checkout_response.dart';
+import '../base_widget.dart';
+import '../common/extensions.dart';
+import '../custom_dialog.dart';
+import '../error_widget.dart';
+import '../sucessful_widget.dart';
+import 'bank_checkout.dart';
+import 'card_checkout.dart';
+import 'checkout_method.dart';
 
 const kFullTabHeight = 74.0;
 
@@ -28,7 +29,7 @@ class CheckoutWidget extends StatefulWidget {
   final CardServiceContract cardsService;
   final String publicKey;
 
-  CheckoutWidget({
+  const CheckoutWidget({
     required this.method,
     required this.charge,
     required this.bankService,
@@ -67,18 +68,16 @@ class _CheckoutWidgetState extends BaseState<CheckoutWidget>
     _initPaymentMethods();
     _currentIndex = _getCurrentTab();
     _showTabs = widget.method == CheckoutMethod.selectable ? true : false;
-    _tabController = new TabController(
+    _tabController = TabController(
         vsync: this,
         length: _methodWidgets.length,
         initialIndex: _currentIndex!);
     _tabController!.addListener(_indexChange);
-    _animationController = new AnimationController(
+    _animationController = AnimationController(
       duration: const Duration(milliseconds: 500),
       vsync: this,
     );
-    if (_charge.card == null) {
-      _charge.card = PaymentCard.empty();
-    }
+    _charge.card ??= PaymentCard.empty();
   }
 
   @override
@@ -94,7 +93,7 @@ class _CheckoutWidgetState extends BaseState<CheckoutWidget>
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
-        Row(
+        const Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
@@ -102,31 +101,31 @@ class _CheckoutWidgetState extends BaseState<CheckoutWidget>
             Padding(
               padding: EdgeInsetsDirectional.only(start: 3),
               child: Text(
-                "Secured by",
-                key: Key("SecuredBy"),
+                'Secured by',
+                key: Key('SecuredBy'),
                 style: TextStyle(fontSize: 10),
               ),
             )
           ],
         ),
-        SizedBox(height: 5),
+        const SizedBox(height: 5),
         Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             if (widget.logo != null)
               Padding(
-                padding: EdgeInsetsDirectional.only(end: 3),
+                padding: const EdgeInsetsDirectional.only(end: 3),
                 child: Image.asset(
                   'assets/images/paystack_icon.png',
-                  key: Key("PaystackBottomIcon"),
+                  key: const Key('PaystackBottomIcon'),
                   package: 'flutter_paystack',
                   height: 16,
                 ),
               ),
             Image.asset(
               'assets/images/paystack.png',
-              key: Key("PaystackLogo"),
+              key: const Key('PaystackLogo'),
               package: 'flutter_paystack',
               height: 15,
             )
@@ -134,18 +133,18 @@ class _CheckoutWidgetState extends BaseState<CheckoutWidget>
         )
       ],
     );
-    return new CustomAlertDialog(
+    return CustomAlertDialog(
       expanded: true,
       fullscreen: widget.fullscreen,
-      titlePadding: EdgeInsets.all(0.0),
+      titlePadding: const EdgeInsets.all(0.0),
       onCancelPress: onCancelPress,
       title: _buildTitle(),
-      content: new Container(
-        child: new SingleChildScrollView(
+      content: Container(
+        child: SingleChildScrollView(
           child: GestureDetector(
             onTap: () => FocusScope.of(context).unfocus(),
             behavior: HitTestBehavior.translucent,
-            child: new Container(
+            child: Container(
                 padding: const EdgeInsets.symmetric(
                     vertical: 10.0, horizontal: 10.0),
                 child: Column(
@@ -155,7 +154,7 @@ class _CheckoutWidgetState extends BaseState<CheckoutWidget>
                         : _paymentSuccessful
                             ? _buildSuccessfulWidget()
                             : _methodWidgets[_currentIndex!].child,
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
                     securedWidget
                   ],
                 )),
@@ -173,7 +172,7 @@ class _CheckoutWidgetState extends BaseState<CheckoutWidget>
         if (!widget.hideEmail && _charge.email != null)
           Text(
             _charge.email!,
-            key: Key("ChargeEmail"),
+            key: const Key('ChargeEmail'),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: TextStyle(
@@ -181,24 +180,29 @@ class _CheckoutWidgetState extends BaseState<CheckoutWidget>
           ),
         if (!widget.hideAmount && !_charge.amount.isNegative)
           Row(
-            key: Key("DisplayAmount"),
+            key: const Key('DisplayAmount'),
             mainAxisAlignment: MainAxisAlignment.end,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Text(
                 'Pay',
                 style: TextStyle(
-                    fontSize: 14.0, color: context.textTheme().headline1?.color),
+                    fontSize: 14.0,
+                    color: context.textTheme().headlineLarge?.color),
               ),
-              SizedBox(
+              const SizedBox(
                 width: 5.0,
               ),
               Flexible(
-                  child: Text(Utils.formatAmount(_charge.amount),
-                      style: TextStyle(
-                          fontSize: 15.0,
-                          color: context.textTheme().headline6?.color,
-                          fontWeight: FontWeight.bold)))
+                child: Text(
+                  Utils.formatAmount(_charge.amount),
+                  style: TextStyle(
+                    fontSize: 15.0,
+                    color: context.textTheme().headlineSmall?.color,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              )
             ],
           )
       ],
@@ -207,28 +211,28 @@ class _CheckoutWidgetState extends BaseState<CheckoutWidget>
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        new Container(
+        Container(
           padding: const EdgeInsets.all(10.0),
-          child: new Row(
+          child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
               if (widget.logo == null)
                 Image.asset(
                   'assets/images/paystack_icon.png',
-                  key: Key("PaystackIcon"),
+                  key: const Key('PaystackIcon'),
                   package: 'flutter_paystack',
                   width: 25,
                 )
               else
                 SizedBox(
-                  key: Key("Logo"),
+                  key: const Key('Logo'),
                   child: widget.logo,
                 ),
-              new SizedBox(
+              const SizedBox(
                 width: 50,
               ),
-              new Expanded(child: emailAndAmount),
+              Expanded(child: emailAndAmount),
             ],
           ),
         ),
@@ -241,18 +245,18 @@ class _CheckoutWidgetState extends BaseState<CheckoutWidget>
     return AnimatedSize(
       duration: const Duration(milliseconds: 300),
       curve: Curves.fastOutSlowIn,
-      child: new Container(
-        color: context.colorScheme().background.withOpacity(0.5),
+      child: Container(
+        color: context.colorScheme().surface.withOpacity(0.5),
         height: _tabHeight,
         alignment: Alignment.center,
-        child: new TabBar(
+        child: TabBar(
           controller: _tabController,
           isScrollable: true,
-          unselectedLabelColor: context.colorScheme().onBackground,
+          unselectedLabelColor: context.colorScheme().onSurface,
           labelColor: accentColor,
           labelStyle:
-              new TextStyle(fontSize: 14.0, fontWeight: FontWeight.w500),
-          indicator: new ShapeDecoration(
+              const TextStyle(fontSize: 14.0, fontWeight: FontWeight.w500),
+          indicator: ShapeDecoration(
             shape: RoundedRectangleBorder(
                   borderRadius: tabBorderRadius,
                   side: BorderSide(
@@ -269,9 +273,9 @@ class _CheckoutWidgetState extends BaseState<CheckoutWidget>
                 ),
           ),
           tabs: _methodWidgets.map<Tab>((MethodItem m) {
-            return new Tab(
+            return Tab(
               text: m.text,
-              icon: new Icon(
+              icon: Icon(
                 m.icon,
                 size: 24.0,
               ),
@@ -292,11 +296,11 @@ class _CheckoutWidgetState extends BaseState<CheckoutWidget>
 
   void _initPaymentMethods() {
     _methodWidgets = [
-      new MethodItem(
+      MethodItem(
           text: 'Card',
           icon: Icons.credit_card,
-          child: new CardCheckout(
-            key: Key("CardCheckout"),
+          child: CardCheckout(
+            key: const Key('CardCheckout'),
             publicKey: widget.publicKey,
             service: widget.cardsService,
             charge: _charge,
@@ -311,10 +315,10 @@ class _CheckoutWidgetState extends BaseState<CheckoutWidget>
               _charge.card!.expiryYear = card.expiryYear;
             },
           )),
-      new MethodItem(
+      MethodItem(
         text: 'Bank',
         icon: Icons.account_balance,
-        child: new BankCheckout(
+        child: BankCheckout(
           publicKey: widget.publicKey,
           charge: _charge,
           service: widget.bankService,
@@ -334,7 +338,7 @@ class _CheckoutWidgetState extends BaseState<CheckoutWidget>
     });
   }
 
-  _showProcessingError() {
+  bool _showProcessingError() {
     return !(_paymentError == null || _paymentError!.isEmpty);
   }
 
@@ -380,58 +384,58 @@ class _CheckoutWidgetState extends BaseState<CheckoutWidget>
 
   Widget _buildErrorWidget() {
     _initPaymentMethods();
-    void _resetShowTabs() {
+    void resetShowTabs() {
       _response = null; // Reset the response
       _showTabs = widget.method == CheckoutMethod.selectable ? true : false;
     }
 
-    return new ErrorWidget(
+    return ErrorWidget(
       text: _paymentError,
       method: widget.method,
       isCardPayment: _charge.card!.isValid(),
       vSync: this,
       payWithBank: () {
         setState(() {
-          _resetShowTabs();
+          resetShowTabs();
           _onPaymentError(null);
-          _charge.card = new PaymentCard.empty();
+          _charge.card = PaymentCard.empty();
           _tabController!.index = 1;
           _paymentError = null;
         });
       },
       tryAnotherCard: () {
         setState(() {
-          _resetShowTabs();
+          resetShowTabs();
           _onPaymentError(null);
-          _charge.card = new PaymentCard.empty();
+          _charge.card = PaymentCard.empty();
           _tabController!.index = 0;
         });
       },
       startOverWithCard: () {
-        _resetShowTabs();
+        resetShowTabs();
         _onPaymentError(null);
         _tabController!.index = 0;
       },
     );
   }
 
-  Widget _buildSuccessfulWidget() => new SuccessfulWidget(
+  Widget _buildSuccessfulWidget() => SuccessfulWidget(
         amount: _charge.amount,
         onCountdownComplete: () {
           if (_response!.card != null) {
             _response!.card!.nullifyNumber();
           }
-         Navigator.of(context).pop(_response);
+          Navigator.of(context).pop(_response);
         },
       );
 
   @override
-  getPopReturnValue() {
+  CheckoutResponse getPopReturnValue() {
     return _getResponse();
   }
 
   CheckoutResponse _getResponse() {
-    CheckoutResponse? response = _response;
+    var response = _response;
     if (response == null) {
       response = CheckoutResponse.defaults();
       response.method = _tabController!.index == 0
@@ -449,4 +453,4 @@ class _CheckoutWidgetState extends BaseState<CheckoutWidget>
   }
 }
 
-typedef void OnResponse<CheckoutResponse>(CheckoutResponse response);
+typedef OnResponse<CheckoutResponse> = void Function(CheckoutResponse response);

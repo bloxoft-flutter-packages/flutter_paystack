@@ -22,9 +22,9 @@ class _PinWidgetState extends BaseState<PinWidget> {
 
   @override
   Widget buildChild(BuildContext context) {
-    return new CustomAlertDialog(
-      content: new SingleChildScrollView(
-        child: new Container(
+    return CustomAlertDialog(
+      content: SingleChildScrollView(
+        child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -38,15 +38,14 @@ class _PinWidgetState extends BaseState<PinWidget> {
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontWeight: FontWeight.w500,
-                  color: context.textTheme().headline6?.color,
+                  color: context.textTheme().titleLarge?.color,
                   fontSize: 15.0,
                 ),
               ),
               heightBox,
-              new PinField(
-                  onSaved: (String pin) => Navigator.of(context).pop(pin)),
+              PinField(onSaved: (String pin) => Navigator.of(context).pop(pin)),
               heightBox,
-              new WhiteButton(
+              WhiteButton(
                 onPressed: onCancelPress,
                 text: 'Cancel',
                 flat: true,
@@ -60,18 +59,18 @@ class _PinWidgetState extends BaseState<PinWidget> {
   }
 
   Widget buildStar() {
-    Icon star(Color color) => new Icon(
+    Icon star(Color color) => Icon(
           Icons.star,
           color: color,
           size: 12.0,
         );
 
-    return new Container(
+    return Container(
       padding: const EdgeInsets.fromLTRB(6.0, 15.0, 6.0, 6.0),
       decoration: BoxDecoration(
           color: Theme.of(context).primaryColorDark,
           borderRadius: const BorderRadius.all(Radius.circular(5.0))),
-      child: new Row(
+      child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         mainAxisSize: MainAxisSize.min,
         children: List.generate(
